@@ -2,4 +2,4 @@ import moves
 import face
 
 moves()
-face()
+# face()

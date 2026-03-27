@@ -1,5 +1,6 @@
-import moves
-import face
+from facial_recognition import facial_recognition
+from moves import moves
 
-moves()
-# face()
+while True:
+    facial_recognition()
+    # moves()

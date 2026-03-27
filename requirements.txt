@@ -1,0 +1,5 @@
+# python3 -m venv --system-site-packages .venv
+# source .venv/bin/activate
+face-recognition
+imutils
+opencv-python

@@ -38,47 +38,229 @@ int main(int argc, char *argv[]) {
 
 	struct input_event ie;
 
-	// 15 is middle position
 	// 10 is 0 degrees
 	// 20 is 180 degrees
 	// 15 is middle (start position)
 	wiringPiSetup();
 
 	// Front left leg
-	softPwmCreate(servo0, 15, 100);
-	softPwmCreate(servo1, 15, 100);
-	softPwmCreate(servo2, 15, 100);
+	printf("Front left leg base\n");
+	softPwmCreate(servo0, 15, 100); // Good
+	softPwmCreate(servo1, 15, 100); // Good
+	softPwmCreate(servo2, 15, 100); // Good
 
 	// Front right leg
+	printf("Front right leg base\n");
 	softPwmCreate(servo3, 15, 100); // Good
-	softPwmCreate(servo4, 15, 100);
-	softPwmCreate(servo5, 15, 100);
+	softPwmCreate(servo4, 15, 100); // Good 
+	softPwmCreate(servo5, 15, 100); // Good 
 
 	// Back left leg
-	softPwmCreate(servo6, 15, 200); // Good
+	printf("Back left leg base \n");
+	softPwmCreate(servo6, 15, 100); // Good 
 	softPwmCreate(servo7, 15, 100); // Good
-	softPwmCreate(servo8, 15, 100);
+	softPwmCreate(servo8, 15, 100); // Good
 
 	// Back right leg
-	softPwmCreate(servo9, 15, 100);
-	softPwmCreate(servo10, 15, 100);
-	softPwmCreate(servo11, 15, 100);
-
-	delay(1000);
+	printf("Back right leg base\n");
+	softPwmCreate(servo9, 15, 100); // Good
+	softPwmCreate(servo10, 15, 100); // Good
+	softPwmCreate(servo11, 15, 100); // Good
 
 	while (1) {
 		read(fd, &ie, sizeof(ie));
 
 		if (ie.code == 307 && ie.value == 1) {
-			printf("Haut\n");
-		} else if (ie.code == 305 && ie.value == 1) {
-			printf("Droite\n");
+
+			printf("Front\n");
+
+			softPwmWrite(servo0, 10);
+			// delay(500);
+
+			softPwmWrite(servo7, 10);
+			softPwmWrite(servo6, 20);
+			delay(500);
+
+			softPwmWrite(servo7, 15);
+
+			softPwmWrite(servo1, 10);
+			softPwmWrite(servo0, 15);
+			softPwmWrite(servo2, 22);
+			delay(500);
+
+			softPwmWrite(servo1, 15);
+			delay(1000);
+
+			softPwmWrite(servo2, 15);
+			
+			softPwmWrite(servo3, 20);
+
+		} else if (ie.code == 307 && ie.value == 0) {
+
+			printf("Idle\n");
+
+			// Front left leg
+			softPwmWrite(servo0, 15);
+			softPwmWrite(servo1, 15);
+			softPwmWrite(servo2, 15);
+
+			// Front right leg
+			softPwmWrite(servo3, 15);
+			softPwmWrite(servo4, 15);
+			softPwmWrite(servo5, 15);
+
+			// Back left leg
 			softPwmWrite(servo6, 15);
-		} else if (ie.code == 304 && ie.value == 1) {
-			printf("Bas\n");
-		} else if (ie.code == 308 && ie.value == 1) {
-			printf("Gauche\n");
+			softPwmWrite(servo7, 15);
+			softPwmWrite(servo8, 15);
+
+			// Back right leg
+			softPwmWrite(servo9, 15);
+			softPwmWrite(servo10, 15);
+			softPwmWrite(servo11, 15);
+
+		}
+
+
+
+
+
+		if (ie.code == 305 && ie.value == 1) {
+
+			printf("Turn right\n");
+
+			// Front left leg
+			softPwmWrite(servo0, 20);
+			softPwmWrite(servo1, 15);
+			softPwmWrite(servo2, 15);
+
+			// Front right leg
+			softPwmWrite(servo3, 20);
+			softPwmWrite(servo4, 15);
+			softPwmWrite(servo5, 15);
+
+			// Back left leg
+			softPwmWrite(servo6, 20);
+			softPwmWrite(servo7, 15);
+			softPwmWrite(servo8, 15);
+
+			// Back right leg
+			softPwmWrite(servo9, 20);
+			softPwmWrite(servo10, 15);
+			softPwmWrite(servo11, 15);
+
+		} else if (ie.code == 305 && ie.value == 0) {
+
+			printf("Idle\n");
+
+			// Front left leg
+			softPwmWrite(servo0, 15);
+			softPwmWrite(servo1, 15);
+			softPwmWrite(servo2, 15);
+
+			// Front right leg
+			softPwmWrite(servo3, 15);
+			softPwmWrite(servo4, 15);
+			softPwmWrite(servo5, 15);
+
+			// Back left leg
+			softPwmWrite(servo6, 15);
+			softPwmWrite(servo7, 15);
+			softPwmWrite(servo8, 15);
+
+			// Back right leg
+			softPwmWrite(servo9, 15);
+			softPwmWrite(servo10, 15);
+			softPwmWrite(servo11, 15);
+
+		}
+
+
+
+
+
+		if (ie.code == 304 && ie.value == 1) {
+
+			printf("Back\n");
+
+		} else if (ie.code == 304 && ie.value == 0) {
+
+			printf("Idle\n");
+			
+			// Front left leg
+			softPwmWrite(servo0, 15);
+			softPwmWrite(servo1, 15);
+			softPwmWrite(servo2, 15);
+			
+			// Front right leg
+			softPwmWrite(servo3, 15);
+			softPwmWrite(servo4, 15);
+			softPwmWrite(servo5, 15);
+
+			// Back left leg
+			softPwmWrite(servo6, 15);
+			softPwmWrite(servo7, 15);
+			softPwmWrite(servo8, 15);
+
+			// Back right leg
+			softPwmWrite(servo9, 15);
+			softPwmWrite(servo10, 15);
+			softPwmWrite(servo11, 15);
+
+		}
+
+
+
+
+
+		if (ie.code == 308 && ie.value == 1) {
+
+			printf("Turn left\n");
+
+			// Front left leg
+			softPwmWrite(servo0, 10);
+			softPwmWrite(servo1, 15);
+			softPwmWrite(servo2, 15);
+
+			// Front right leg
+			softPwmWrite(servo3, 10);
+			softPwmWrite(servo4, 15);
+			softPwmWrite(servo5, 15);
+
+			// Back left leg
 			softPwmWrite(servo6, 10);
+			softPwmWrite(servo7, 15);
+			softPwmWrite(servo8, 15);
+
+			// Back right leg
+			softPwmWrite(servo9, 10);
+			softPwmWrite(servo10, 15);
+			softPwmWrite(servo11, 15);
+
+		} else if (ie.code == 308 && ie.value == 0) {
+
+			printf("Idle\n");
+
+			// Front left leg
+			softPwmWrite(servo0, 15);
+			softPwmWrite(servo1, 15);
+			softPwmWrite(servo2, 15);
+
+			// Front right leg
+			softPwmWrite(servo3, 15);
+			softPwmWrite(servo4, 15);
+			softPwmWrite(servo5, 15);
+
+			// Back left leg
+			softPwmWrite(servo6, 15);
+			softPwmWrite(servo7, 15);
+			softPwmWrite(servo8, 15);
+
+			// Back right leg
+			softPwmWrite(servo9, 15);
+			softPwmWrite(servo10, 15);
+			softPwmWrite(servo11, 15);
+
 		}
 	}
 

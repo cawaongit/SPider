@@ -1,5 +1,7 @@
 #include <fcntl.h>
 #include <linux/input.h>
+#include <opencv2/dnn.hpp>
+#include <opencv2/opencv.hpp>
 #include <pca9685.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,12 +28,55 @@
 #define MAX_PWM 4096
 #define HERTZ 50
 
-/* float millis = 1.5;
-int tick = calcTicks(millis, HERTZ); */
-
 int calcTicks(float impulseMs, int hertz) {
 	float cycleMs = 1000.0f / hertz;
 	return (int)(MAX_PWM * impulseMs / cycleMs + 0.5f);
+}
+
+int facial_recognition() {
+	cv::namedWindow("Frame", 0);
+	cv::String detectionModelPath = "/home/sasha/SPider/face_detection_yunet_2023mar.onnx";
+	cv::String recognizerModelPath = "/home/sasha/SPider/face_recognition_sface_2021dec.onnx";
+
+	cv::Mat refImg = cv::imread("/home/sasha/SPider/.png");
+	cv::Mat frame, faceRef, alignedRedFace, featureRef, facesGlobal;
+
+	cv::Ptr<cv::FaceDetectorYN> detectorRef = cv::FaceDetectorYN::create(detectionModelPath, "", cv::Size(320, 320));
+	detectorRef->setInputSize(refImg.size());
+	detectorRef->detect(refImg, faceRef);
+
+	cv::Ptr<cv::FaceRecognizerSF> recognizerRef = cv::FaceRecognizerSF::create(recognizerModelPath, "");
+	recognizerRef->alignCrop(refImg, faceRef(0), alignedRedFace);
+	recognizerRef->feature(alignedRedFace, featureRef);
+
+	cv::Ptr<cv::FaceDetectorYN> detectorGlobal = cv::FaceDetectorYN::create(detectionModelPath, "", cv::Size(320, 320));
+	cv::Ptr<cv::FaceRecognizerSF> recognizerGlobal = cv::FaceRecognizerSF::create(recognizerModelPath, "");
+
+	detectorGlobal->setInputSize(cv::Size(1280, 720));
+
+
+	cv::VideoCapture cap(0);
+
+	while (1) {
+
+		cap >> frame;
+		detectorGlobal->detect(frame, facesGlobal);
+
+		for (int i = 0; i < facesGlobal.rows; i++) {
+			cv::Rect box(facesGlobal.at<float>(i, 0), facesGlobal.at<float>(i, 1), facesGlobal.at<float>(i, 2), facesGlobal.at<float>(i, 3));
+			cv::rectangle(frame, box, cv::Scalar(0, 255, 255, 255), 3);
+		}
+
+		cv::imshow("Frame", frame);
+		if (cv::waitKey(1) == 'q') {
+			break;
+		}
+	
+	}
+
+	cap.release();
+
+	return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -67,7 +112,7 @@ int main(int argc, char *argv[]) {
 	printf("Front left leg base\n");
 	pwmWrite(servo0, calcTicks(1.5, HERTZ));
 	pwmWrite(servo1, calcTicks(1.5, HERTZ)); // Good
-	pwmWrite(servo2, calcTicks(1.5, HERTZ)); // Good */
+	pwmWrite(servo2, calcTicks(1.5, HERTZ)); // Good
 	delay(1000);
 
 	// Front right leg
@@ -98,49 +143,65 @@ int main(int argc, char *argv[]) {
 
 			printf("Front\n");
 
+
+			// Left side movement
+
+
+			// Front left leg
+			pwmWrite(servo0, calcTicks(1, HERTZ));
+			delay(250);
+
+			// Back left leg
+			pwmWrite(servo6, calcTicks(2, HERTZ));
+			pwmWrite(servo7, calcTicks(1, HERTZ));
+			delay(250);
+
+			// Back left leg
+			pwmWrite(servo7, calcTicks(1.5, HERTZ));
+
+			// Front left leg
+			pwmWrite(servo0, calcTicks(1.5, HERTZ));
 			pwmWrite(servo1, calcTicks(1.7, HERTZ));
-			/* softPwmWrite(servo1, 10);
-			softPwmWrite(servo0, 10);
+			pwmWrite(servo2, calcTicks(2.2, HERTZ));
 			delay(250);
 
-			softPwmWrite(servo1, 15);
+			// Front left leg
+			pwmWrite(servo1, calcTicks(1.5, HERTZ));
+			pwmWrite(servo2, calcTicks(1.5, HERTZ));
+
+			// Back left leg
+			pwmWrite(servo6, calcTicks(1.5, HERTZ));
+
+
+			// Right side movement
+
+
+			// Front right
+			pwmWrite(servo3, calcTicks(2, HERTZ));
 			delay(250);
-
-			softPwmWrite(servo7, 10);
-			softPwmWrite(servo6, 20);
-			delay(250);
-
-			softPwmWrite(servo7, 15);
-
-			// Search in front to walk (left side)
-			softPwmWrite(servo1, 10);
-			softPwmWrite(servo0, 15);
-			softPwmWrite(servo2, 25);
-
-			softPwmWrite(servo1, 15);
-			delay(250);
-
-			softPwmWrite(servo2, 15);
 			
-			softPwmWrite(servo6, 15);
-
-			softPwmWrite(servo3, 20);
-
-			softPwmWrite(servo10, 10);
-			softPwmWrite(servo9, 10);
+			// Back right leg
+			pwmWrite(servo9, calcTicks(1, HERTZ));
+			pwmWrite(servo10, calcTicks(1, HERTZ));
 			delay(250);
 
-			softPwmWrite(servo10, 15);
+			// Front right leg
+			pwmWrite(servo10, calcTicks(1.5, HERTZ));
 
-			// Search in front to walk (right side)
-			softPwmWrite(servo4, 10);
-			softPwmWrite(servo3, 15);
-			softPwmWrite(servo5, 20);
+			// Front right leg
+			pwmWrite(servo3, calcTicks(1.5, HERTZ));
+			pwmWrite(servo4, calcTicks(1.7, HERTZ));
+			pwmWrite(servo5, calcTicks(2.2, HERTZ));
+			delay(250);
 
-			softPwmWrite(servo4, 15);
-			softPwmWrite(servo5, 15);
-			// softPwmWrite(servo0, 10);
-			softPwmWrite(servo9, 15); */
+			// Front right leg
+			pwmWrite(servo4, calcTicks(1.5, HERTZ));
+			pwmWrite(servo5, calcTicks(1.5, HERTZ));
+
+			pwmWrite(servo0, calcTicks(1, HERTZ));
+			delay(250);
+
+			// pwmWrite(servo9, calcTicks(1.5, HERTZ));
 
 		} else if (ie.code == 307 && ie.value == 0) {
 
@@ -174,27 +235,33 @@ int main(int argc, char *argv[]) {
 
 		if (ie.code == 305 && ie.value == 1) {
 
-			/* printf("Turn right\n");
+			printf("Turn right\n");
 
-			// Front left leg
-			softPwmWrite(servo0, 20);
-			softPwmWrite(servo1, 15);
-			softPwmWrite(servo2, 15);
+			pwmWrite(servo4, calcTicks(1.3, HERTZ)); // Ok
+			delay(250);
 
-			// Front right leg
-			softPwmWrite(servo3, 20);
-			softPwmWrite(servo4, 15);
-			softPwmWrite(servo5, 15);
+			pwmWrite(servo3, calcTicks(2, HERTZ)); // Ok
+			delay(250);
 
-			// Back left leg
-			softPwmWrite(servo6, 20);
-			softPwmWrite(servo7, 15);
-			softPwmWrite(servo8, 15);
+			pwmWrite(servo4, calcTicks(1.5, HERTZ)); // Ok
+			delay(250);
 
-			// Back right leg
-			softPwmWrite(servo9, 20);
-			softPwmWrite(servo10, 15);
-			softPwmWrite(servo11, 15); */
+			pwmWrite(servo7, calcTicks(1.3, HERTZ)); // Ok
+			delay(250);
+
+			pwmWrite(servo6, calcTicks(2, HERTZ)); // Ok
+			delay(250);
+
+			pwmWrite(servo7, calcTicks(1.5, HERTZ)); // Ok
+			delay(250);
+			
+			pwmWrite(servo3, calcTicks(1.5, HERTZ));
+
+			pwmWrite(servo0, calcTicks(1, HERTZ));
+
+			pwmWrite(servo9, calcTicks(1, HERTZ));
+
+			pwmWrite(servo6, calcTicks(1.5, HERTZ));
 
 		} else if (ie.code == 305 && ie.value == 0) {
 
@@ -264,25 +331,31 @@ int main(int argc, char *argv[]) {
 
 			printf("Turn left\n");
 
-			/* // Front left leg
-			pwmWrite(servo0, tick);
-			pwmWrite(servo1, tick);
-			pwmWrite(servo2, tick);
+			pwmWrite(servo1, calcTicks(1.3, HERTZ));
+			delay(250);
 
-			// Front right leg
-			pwmWrite(servo3, tick);
-			pwmWrite(servo4, tick);
-			pwmWrite(servo5, tick);
+			pwmWrite(servo0, calcTicks(1, HERTZ));
+			delay(250);
 
-			// Back left leg
-			softPwmWrite(servo6, 10);
-			softPwmWrite(servo7, 15);
-			softPwmWrite(servo8, 15);
+			pwmWrite(servo1, calcTicks(1.5, HERTZ));
+			delay(250);
 
-			// Back right leg
-			softPwmWrite(servo9, 10);
-			softPwmWrite(servo10, 15);
-			softPwmWrite(servo11, 15); */
+			pwmWrite(servo10, calcTicks(1.3, HERTZ));
+			delay(250);
+
+			pwmWrite(servo9, calcTicks(1, HERTZ));
+			delay(250);
+
+			pwmWrite(servo10, calcTicks(1.5, HERTZ));
+			delay(250);
+			
+			pwmWrite(servo0, calcTicks(1.5, HERTZ));
+
+			pwmWrite(servo3, calcTicks(2, HERTZ));
+
+			pwmWrite(servo6, calcTicks(2, HERTZ));
+
+			pwmWrite(servo9, calcTicks(1.5, HERTZ));
 
 		} else if (ie.code == 308 && ie.value == 0) {
 
@@ -331,7 +404,9 @@ int main(int argc, char *argv[]) {
 			exit(0);
 		
 		}
-	}
+	 }
 
 	return 0;
 }
+
+

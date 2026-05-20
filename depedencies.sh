@@ -3,21 +3,22 @@ sudo apt install libopencv-dev
 
 
 # WiringPi
-sudo apt install git
-git clone https://github.com/WiringPi/WiringPi.git
-cd WiringPi
+# sudo apt install git
+# git clone https://github.com/WiringPi/WiringPi.git
+# cd WiringPi
 
 # build the package
-./build debian
-mv debian-template/wiringpi_3.18_arm64.deb .
+# ./build debian
+# mv debian-template/wiringpi_3.18_arm64.deb .
 
 # install it
-sudo apt install ./wiringpi_3.18_arm64.deb
+# sudo apt install ./wiringpi_3.18_arm64.deb
 
 # remove repo
-cd ..
-rm -rf WiringPi/
+# cd ..
+# rm -rf WiringPi/
 
+sudo apt install wiringpi
 
 # pca9685
 git clone https://github.com/Reinbert/pca9685.git

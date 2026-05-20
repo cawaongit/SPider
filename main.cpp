@@ -2,6 +2,7 @@
 #include <linux/input.h>
 #include <opencv2/dnn.hpp>
 #include <opencv2/opencv.hpp>
+#include <iostream>
 #include <pca9685.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,8 +36,8 @@ int calcTicks(float impulseMs, int hertz) {
 
 int facial_recognition() {
 	cv::namedWindow("Frame", 0);
-	cv::String detectionModelPath = "/home/sasha/SPider/face_detection_yunet_2023mar.onnx";
-	cv::String recognizerModelPath = "/home/sasha/SPider/face_recognition_sface_2021dec.onnx";
+	cv::String detectionModelPath = "../face_detection_yunet_2023mar.onnx";
+	cv::String recognizerModelPath = "../face_recognition_sface_2021dec.onnx";
 
 	cv::Mat refImg = cv::imread("/home/sasha/SPider/.png");
 	cv::Mat frame, faceRef, alignedRedFace, featureRef, facesGlobal;
@@ -80,6 +81,9 @@ int facial_recognition() {
 }
 
 int main(int argc, char *argv[]) {
+
+	// facial_recognition();
+
 	float millis = 1.5;
 	int tick = calcTicks(millis, HERTZ);
 

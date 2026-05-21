@@ -205,7 +205,16 @@ int main(int argc, char *argv[]) {
 			pwmWrite(servo0, calcTicks(1, HERTZ));
 			delay(250);
 
-			// pwmWrite(servo9, calcTicks(1.5, HERTZ));
+			pwmWrite(servo1, calcTicks(1, HERTZ));
+			pwmWrite(servo0, calcTicks(1.5, HERTZ));
+			pwmWrite(servo1, calcTicks(1.5, HERTZ));
+			delay(250);
+
+			pwmWrite(servo10, calcTicks(1, HERTZ));
+			pwmWrite(servo9, calcTicks(1.5, HERTZ));
+			delay(250);
+
+			pwmWrite(servo10, calcTicks(1.5, HERTZ));
 
 		} else if (ie.code == 307 && ie.value == 0) {
 
